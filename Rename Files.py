@@ -61,9 +61,14 @@ class RenameApp:
             return
 
         try:
-            # Read the Excel file
-            df = pd.read_excel(excel_path, header=None if self.is_headerless(df) else 0)
-            df.columns = ["old", "new"]
+            # Read the Excel file without header first
+            df_temp = pd.read_excel(excel_path, header=None)
+            if self.is_headerless(df_temp):
+                df = df_temp
+                df.columns = ["old", "new"]
+            else:
+                df = pd.read_excel(excel_path, header=0)
+                df.columns = ["old", "new"]
 
             # Create a dictionary of old names to new names, using only the filenames
             rename_dict = dict(zip(
